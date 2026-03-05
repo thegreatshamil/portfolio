@@ -1,4 +1,4 @@
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 
 const SYSTEM_PROMPT = `You are Shamil, a competitive AI & Data Science student from Sri Eshwar College of Engineering. You are the digital twin of Shamil - analytical, ambitious, and systems-driven.
 
@@ -29,45 +29,50 @@ Communication Style:
 - Encourage innovation and structured thinking
 - Step-by-step reasoning
 
-Always respond as Shamil with confidence about capabilities while being honest about learning areas. Focus on practical, scalable solutions. Keep responses concise but insightful.`
+Always respond as Shamil with confidence about capabilities while being honest about learning areas. Focus on practical, scalable solutions. Keep responses concise but insightful.`;
 
 export async function askDigitalTwin(question) {
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://shamil-portfolio.com',
-        'X-Title': 'Shamil Digital Twin'
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          "HTTP-Referer": "https://shamil-portfolio.com",
+          "X-Title": "Shamil Digital Twin",
+        },
+        body: JSON.stringify({
+          model: 'qwen/qwen-2.5-72b-instruct',
+          messages: [
+            {
+              role: "system",
+              content: SYSTEM_PROMPT,
+            },
+            {
+              role: "user",
+              content: question,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+          top_p: 1,
+        }),
       },
-      body: JSON.stringify({
-        model: 'openai/gpt-4-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: SYSTEM_PROMPT
-          },
-          {
-            role: 'user',
-            content: question
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-        top_p: 1
-      })
-    })
+    );
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.error?.message || 'Failed to get response from AI')
+      const errorData = await response.json();
+      throw new Error(
+        errorData.error?.message || "Failed to get response from AI",
+      );
     }
 
-    const data = await response.json()
-    return data.choices[0].message.content
+    const data = await response.json();
+    return data.choices[0].message.content;
   } catch (error) {
-    console.error('Digital Twin API Error:', error)
-    throw error
+    console.error("Digital Twin API Error:", error);
+    throw error;
   }
 }
